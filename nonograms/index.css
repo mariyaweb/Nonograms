@@ -1,0 +1,53 @@
+* {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+
+.table {
+  border-collapse: collapse;
+}
+
+.table__container {
+  border-collapse: collapse;
+}
+
+.table__container_col {
+  border: 2px solid black;
+}
+
+.table__clues_top {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.col {
+  width: 25px;
+  height: 25px;
+  border: 1px solid black;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.col_number {
+  background-color: rgb(218, 238, 255);
+}
+
+.col_empty {
+  width: 25px;
+  height: 25px;
+  background-color: rgb(255, 255, 255);
+}
+
+.col_fill {
+  background-color: #3f3d56;
+}
+
+.col_b {
+  border-bottom: 2px solid rgb(0, 0, 0);
+}
+
+.col_r {
+  border-right: 2px solid rgb(0, 0, 0);
+}
