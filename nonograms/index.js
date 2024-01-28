@@ -13,9 +13,11 @@ tablePlayField.className = 'table__field table';
 const countCluesTopRows = games[0].cluesTop.length;
 const countCluesLeftCols = games[0].cluesLeft[0].length;
 
-const size = games[0].size
+const size = games[0].size;
 console.log(size);
 const countCluesTopCols = size;
+const controlField = games[0].field.flat();
+console.log(controlField);
 
 function createTable(container, rows, cols, classNameRow, classNameCol) {
   for (let i = 0; i < rows; i++) {
@@ -100,8 +102,50 @@ const changeFill = (e) => {
   if (el.classList.contains('col_empty')) {
     el.classList.remove('col_empty');
     el.classList.add('col_fill');
+    checkWin();
   } else if (el.classList.contains('col_fill')) {
     el.classList.add('col_empty');
     el.classList.remove('col_fill');
+    checkWin();
   }
+}
+
+function checkWin() {
+  const allItems = tablePlayField.getElementsByClassName('col');
+  const res = Array.from(allItems).every((item, index) => {
+    if (item.classList.contains('col_fill') && controlField[index] === 1
+      || !item.classList.contains('col_fill') && controlField[index] === 0) {
+      return true;
+    }
+  })
+  if (res) {
+    const time = '14:22';
+    createModalWin(time);
+  }
+  console.log(res);
+}
+
+function createModalWin(time) {
+  const modal = document.createElement('div');
+  modal.className = 'modal modal-show';
+  modal.innerHTML = `
+   <div class="modal__wrapper">
+      <div class="modal__title">Great!</div>
+      <div class="modal__subtitle">You have solved the nonogram!</div>
+      <div class="modal__time">Your time: <span class="time">${time}</span></div>
+      <div class="modal__btn btn">New game</div>
+    </div>
+  `
+  document.body.appendChild(modal);
+
+  console.log(modal.getElementsByClassName('modal__btn')[0]);
+  modal.getElementsByClassName('modal__btn')[0].addEventListener('click', () => closeModalWin());
+}
+
+
+
+function newGame() {
+  const modal = document.getElementsByClassName('modal')[0];
+  modal.classList.remove('modal-show');
+  modal.classList.add('modal-hide');
 }
