@@ -31,10 +31,12 @@ document.body.prepend(header);
 function createHeaderMenu() {
   const headerBtns = document.querySelector('.header__btns');
   const headerIco = ['folder', 'puzzle', 'light', 'star', 'random'];
-  headerIco.forEach(item => {
+  const btnsClue = ['Choose the game', 'Continue last game', 'Show solution', 'High score table', 'Random game'];
+  headerIco.forEach((item, index) => {
     const btn = document.createElement('div');
     btn.className = 'header__btn';
     btn.id = item;
+    btn.dataset.clue = `${btnsClue[index]}`;
     const ico = document.createElement('span');
     ico.className = `header__icon icon-${item}`;
     btn.append(ico);
@@ -148,7 +150,7 @@ levelTitle.innerHTML = 'Сhoose a nonogram';
 nonogramList.append(levelTitle);
 const levelBody = document.createElement('div');
 levelBody.className = 'level__body';
-document.body.append(nonogramList);
+document.querySelector('.nonogram').children[0].append(nonogramList);
 
 function createLevelItem() {
   const level = ['Easy', 'Medium', 'Hard'];
