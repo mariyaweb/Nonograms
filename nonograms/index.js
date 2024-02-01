@@ -1,10 +1,7 @@
 import games from './js/games.js';
 console.log(games);
-const size = games[10].size;
-console.log(size);
-const countCluesTopCols = size;
-const controlField = games[10].field.flat();
-console.log(controlField);
+let controlField;
+
 
 
 // Create Header
@@ -55,7 +52,7 @@ nonogramSection.innerHTML = `
         </h1>
         <div class="nonogram__timer"><span class="nonogram__min">00</span> : <span class="nonogram__sec">00</span>
         </div>
-        <h2 class="nonogram__subtitle">${games[10].name}</h2>
+        <h2 class="nonogram__subtitle"></h2>
         <div class="nonogram__table">
           <div class="nonogram__btns">
           <div class="nonogram__btn btn-save">Save</div>
@@ -74,20 +71,39 @@ resetBtn.addEventListener('click', (e) => resetGame(e));
 
 
 // Nonogram Table
-const conteiner = document.createElement('div');
-conteiner.className = 'container';
-const tableContainer = document.createElement('table');
-tableContainer.className = 'table__container table';
-const tableCluesTop = document.createElement('table');
-tableCluesTop.className = 'table__clues_top table';
-const tableCluesLeft = document.createElement('table');
-tableCluesLeft.className = 'table__clues_left table';
-const tablePlayField = document.createElement('table');
-tablePlayField.className = 'table__field table';
-const countCluesTopRows = games[10].cluesTop.length;
-const countCluesLeftCols = games[10].cluesLeft[0].length;
+function createNewGame(currentGame) {
+  if (document.querySelector('.table__container')) {
+    document.querySelector('.table__container').remove();
+  }
+  const { size, name, cluesTop, cluesLeft, field } = currentGame;
+  const countCluesTopRows = cluesTop.length;
+  const countCluesLeftCols = cluesLeft[0].length;
+  const countCluesTopCols = size;
+  const nameGame = document.querySelector('.nonogram__subtitle');
+  controlField = field.flat();
+  nameGame.innerHTML = name;
 
-function createTable(container, rows, cols, classNameRow, classNameCol) {
+  const conteiner = document.createElement('div');
+  conteiner.className = 'container';
+  const tableContainer = document.createElement('table');
+  tableContainer.className = 'table__container table';
+  const tableCluesTop = document.createElement('table');
+  tableCluesTop.className = 'table__clues_top table';
+  const tableCluesLeft = document.createElement('table');
+  tableCluesLeft.className = 'table__clues_left table';
+  const tablePlayField = document.createElement('table');
+  tablePlayField.className = 'table__field table';
+
+  createTable(tableContainer, 2, 2, 'table__container_row', 'table__container_col', tablePlayField);
+  document.querySelector('.nonogram__btns').before(tableContainer);
+  createTopClues(tableCluesTop, countCluesTopRows, countCluesTopCols);
+  createLeftClues(tableCluesLeft, countCluesLeftCols, countCluesTopCols);
+  createPlayField(countCluesTopCols, tablePlayField);
+  createClues(cluesTop, cluesLeft, tableCluesTop, tableCluesLeft);
+}
+createNewGame(games[0]);
+
+function createTable(container, rows, cols, classNameRow, classNameCol, tablePlayField) {
   for (let i = 0; i < rows; i++) {
     const row = document.createElement('tr');
     if (classNameRow) row.className = classNameRow;
@@ -106,7 +122,8 @@ function createTable(container, rows, cols, classNameRow, classNameCol) {
       }
 
       if (container === tablePlayField) {
-        col.addEventListener('click', (e) => changeFill(e));
+        console.log('add');
+        col.addEventListener('click', (e) => changeFill(e, tablePlayField));
       }
       row.appendChild(col);
     }
@@ -115,31 +132,41 @@ function createTable(container, rows, cols, classNameRow, classNameCol) {
 }
 
 
-
-//Create table container
-createTable(tableContainer, 2, 2, 'table__container_row', 'table__container_col');
-document.querySelector('.nonogram__btns').before(tableContainer);
+function changeFill(e, tablePlayField) {
+  console.log(tablePlayField);
+  const el = e.target;
+  console.log(e);
+  if (el.classList.contains('col_empty')) {
+    el.classList.remove('col_empty');
+    el.classList.add('col_fill');
+    checkWin(tablePlayField);
+  } else if (el.classList.contains('col_fill')) {
+    el.classList.add('col_empty');
+    el.classList.remove('col_fill');
+    checkWin(tablePlayField);
+  }
+}
 
 // Create top clues table
-function createTopClues() {
+function createTopClues(tableCluesTop, countCluesTopRows, countCluesTopCols) {
   createTable(tableCluesTop, countCluesTopRows, countCluesTopCols, '', 'col col_empty');
   document.getElementsByClassName('table__container_row')[0].children[1].appendChild(tableCluesTop);
 }
-createTopClues();
+
 
 //Create left clues table
-function createLeftClues() {
+function createLeftClues(tableCluesLeft, countCluesLeftCols, countCluesTopCols) {
   createTable(tableCluesLeft, countCluesTopCols, countCluesLeftCols, '', 'col col_empty');
   document.getElementsByClassName('table__container_row')[1].children[0].appendChild(tableCluesLeft);
 }
-createLeftClues();
+
 
 //Create play field table
-function createPlayField() {
-  createTable(tablePlayField, countCluesTopCols, countCluesTopCols, '', 'col col_empty');
+function createPlayField(countCluesTopCols, tablePlayField) {
+  createTable(tablePlayField, countCluesTopCols, countCluesTopCols, '', 'col col_empty', tablePlayField);
   document.getElementsByClassName('table__container_row')[1].children[1].appendChild(tablePlayField);
 }
-createPlayField();
+
 
 //Create level list
 const nonogramList = document.createElement('div');
@@ -169,6 +196,7 @@ function createLevelItem() {
         const btn = document.createElement('div');
         btn.className = 'level__btn';
         btn.innerHTML = `${game.name}`;
+        btn.addEventListener('click', () => createNewGame(game));
         btns.append(btn);
       }
     });
@@ -182,9 +210,9 @@ function createLevelItem() {
 }
 createLevelItem();
 
-function createClues(item) {
-  const { size, name, cluesTop, cluesLeft } = games[item];
+function createClues(cluesTop, cluesLeft, tableCluesTop, tableCluesLeft) {
   Array.from(tableCluesTop.getElementsByTagName('tr')).forEach((item, itemIndex) => {
+    console.log(item);
     Array.from(item.children).forEach((el, elIndex) => {
       if (cluesTop[itemIndex][elIndex]) {
         el.innerHTML = cluesTop[itemIndex][elIndex];
@@ -205,23 +233,18 @@ function createClues(item) {
     });
   });
 }
-createClues(10);
 
-const changeFill = (e) => {
-  const el = e.target;
-  console.log(e);
-  if (el.classList.contains('col_empty')) {
-    el.classList.remove('col_empty');
-    el.classList.add('col_fill');
-    checkWin();
-  } else if (el.classList.contains('col_fill')) {
-    el.classList.add('col_empty');
-    el.classList.remove('col_fill');
-    checkWin();
-  }
-}
 
-function checkWin() {
+//Create modal window
+const modal = document.createElement('div');
+modal.className = 'modal modal-hide';
+modal.innerHTML = `
+ <div class="modal__wrapper">
+  </div>
+`
+document.body.appendChild(modal);
+
+function checkWin(tablePlayField) {
   const allItems = tablePlayField.getElementsByClassName('col');
   const res = Array.from(allItems).every((item, index) => {
     if (item.classList.contains('col_fill') && controlField[index] === 1
@@ -231,32 +254,38 @@ function checkWin() {
   })
   if (res) {
     const time = '14:22';
-    createModalWin(time);
+    showModalWin(time);
   }
   console.log(res);
 }
 
-function createModalWin(time) {
-  const modal = document.createElement('div');
-  modal.className = 'modal modal-show';
-  modal.innerHTML = `
-   <div class="modal__wrapper">
+
+function showModalWin(time) {
+  const modal = document.querySelector('.modal');
+  const modalWrapper = document.querySelector('.modal__wrapper');
+
+  modalWrapper.innerHTML = `
+      <div class="modal__close">
+        <span class="modal__line"></span>
+        <span class="modal__line"></span>
+      </div>
       <div class="modal__title">Great!</div>
       <div class="modal__subtitle">You have solved the nonogram!</div>
       <div class="modal__time">Your time: <span class="time">${time}</span></div>
       <div class="modal__btn btn">New game</div>
-    </div>
+
   `
-  document.body.appendChild(modal);
-
-  console.log(modal.getElementsByClassName('modal__btn')[0]);
-  modal.getElementsByClassName('modal__btn')[0].addEventListener('click', () => closeModalWin());
+  document.querySelector('.modal__close').addEventListener('click', () => closeModal());
+  modal.classList.remove('modal-hide');
+  modal.classList.add('modal-show');
 }
+// showModalWin('04:04');
 
-function newGame() {
+function newGame(currentGame) {
   const modal = document.getElementsByClassName('modal')[0];
   modal.classList.remove('modal-show');
   modal.classList.add('modal-hide');
+  createNewGame(currentGame);
 }
 
 //Change Theme
@@ -265,7 +294,74 @@ const changeThemeBtn = document.querySelector('.header__theme');
 changeThemeBtn.addEventListener('click', (e) => {
   e.preventDefault();
   root.classList.toggle('dark');
-})
+});
+
+document.querySelector('#folder').addEventListener('click', () => openModalLevel());
+
+function openModalLevel() {
+  const modal = document.querySelector('.modal');
+  const modalWrapper = document.querySelector('.modal__wrapper');
+  modalWrapper.innerHTML = '';
+
+  modalWrapper.innerHTML = `
+      <div class="modal__close">
+        <span class="modal__line"></span>
+        <span class="modal__line"></span>
+      </div>
+      <div class="modal__title">Choose<br>level</div>
+      <div class="modal__btns">
+        <div class="modal__btn btn">5x5</div>
+        <div class="modal__btn btn">10x10</div>
+        <div class="modal__btn btn">15x15</div>
+      </div>
+  `
+  document.querySelector('.modal__close').addEventListener('click', () => closeModal());
+  Array.from(document.querySelector('.modal__btns').children).forEach((item, index) => {
+    const level = (index + 1) * 5;
+    item.addEventListener('click', () => openNumberLevel(level));
+  });
+  modal.classList.remove('modal-hide');
+  modal.classList.add('modal-show');
+}
+// openModalLevel();
+
+function openNumberLevel(num) {
+  const modal = document.querySelector('.modal');
+  const modalWrapper = document.querySelector('.modal__wrapper');
+  modalWrapper.innerHTML = '';
+  modalWrapper.innerHTML = `
+      <div class="modal__arrow arrow">
+        <span class="arrow__line"></span>
+        <span class="arrow__line"></span>
+      </div>
+      <div class="modal__title">Choose<br>a nonogram</div>
+      <div class="modal__subtitle modal__level">level ${num}x${num}</div>
+  `
+  const btns = document.createElement('div');
+  btns.className = 'modal__btns';
+  games.forEach(game => {
+    if (game.size === num) {
+      const btn = document.createElement('div');
+      btn.className = 'modal__btn btn';
+      btn.innerHTML = `${game.name}`;
+      btn.addEventListener('click', () => newGame(game));
+      btns.append(btn);
+    }
+  });
+  modalWrapper.append(btns);
+  document.querySelector('.modal__arrow').addEventListener('click', () => openModalLevel());
+  modal.classList.remove('modal-hide');
+  modal.classList.add('modal-show');
+}
+
+function closeModal() {
+  const modal = document.querySelector('.modal');
+  modal.classList.add('modal-hide');
+  modal.classList.remove('modal-show');
+}
+
+
+
 
 function saveGame(e) {
   console.log('save game');
