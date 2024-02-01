@@ -273,13 +273,12 @@ function showModalWin(time) {
       <div class="modal__subtitle">You have solved the nonogram!</div>
       <div class="modal__time">Your time: <span class="time">${time}</span></div>
       <div class="modal__btn btn">New game</div>
-
   `
   document.querySelector('.modal__close').addEventListener('click', () => closeModal());
+  document.querySelector('.modal__btn').addEventListener('click', () => openModalLevel());
   modal.classList.remove('modal-hide');
   modal.classList.add('modal-show');
 }
-// showModalWin('04:04');
 
 function newGame(currentGame) {
   const modal = document.getElementsByClassName('modal')[0];
@@ -323,7 +322,6 @@ function openModalLevel() {
   modal.classList.remove('modal-hide');
   modal.classList.add('modal-show');
 }
-// openModalLevel();
 
 function openNumberLevel(num) {
   const modal = document.querySelector('.modal');

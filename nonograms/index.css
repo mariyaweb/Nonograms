@@ -18,6 +18,8 @@
   --theme-btn-light: #fafafa;
   --theme-btn-dark: transparent;
   --header-icon-color: #424867;
+  --modal-main-color: #424867;
+  --modal-bg-color: #f4f5f7;
   --btn-shadow: 0px 1px 3px 0px rgba(190, 189, 255, 0.1), 0px 6px 6px 0px rgba(190, 189, 255, 0.09),
     0px 13px 8px 0px rgba(190, 189, 255, 0.05), 0px 24px 10px 0px rgba(190, 189, 255, 0.01),
     0px 37px 10px 0px rgba(190, 189, 255, 0);
@@ -35,6 +37,8 @@
   --theme-btn-light: transparent;
   --theme-btn-dark: #3f3d4e;
   --header-icon-color: #663cc1;
+  --modal-main-color: #fff;
+  --modal-bg-color: #1e1d28;
   --btn-shadow: 0px 4px 6px 0px rgba(9, 8, 11, 0.6);
   color-scheme: dark;
 }
@@ -121,7 +125,7 @@ body {
   padding: 0 40px;
   transition: all 0.5s;
   font-size: 32px;
-  color: #424867;
+  color: var(--modal-main-color);
 }
 
 .modal-show {
@@ -138,7 +142,7 @@ body {
   max-width: 800px;
   padding: 100px;
   border-radius: 12px;
-  background-color: #f4f5f7;
+  background-color: var(--modal-bg-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -177,7 +181,7 @@ body {
   width: 32px;
   height: 2px;
   border-radius: 2px;
-  background-color: #424867;
+  background-color: var(--modal-main-color);
 }
 
 @media (max-width: 768px) {
@@ -212,7 +216,7 @@ body {
   width: 16px;
   height: 3px;
   border-radius: 3px;
-  background-color: #424867;
+  background-color: var(--modal-main-color);
 }
 
 .arrow__line:first-child {
