@@ -459,6 +459,16 @@ body {
   font-weight: 400;
   color: var(--main-text-color);
   margin-bottom: 12px;
+  display: flex;
+  gap: 3px;
+}
+.nonogram__min,
+.nonogram__sec {
+  width: 46px;
+}
+.nonogram__min {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .nonogram__subtitle {

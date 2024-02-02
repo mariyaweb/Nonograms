@@ -47,7 +47,7 @@ nonogramSection.innerHTML = `
       <div class="nonogram__row">
         <h1 class="nonogram__title">Nonogram<span class="nonogram__icon icon-sparkles"></span>
         </h1>
-        <div class="nonogram__timer"><span class="nonogram__min">00</span> : <span class="nonogram__sec">00</span>
+        <div class="nonogram__timer"><div class="nonogram__min">00</div> : <div class="nonogram__sec">00</div>
         </div>
         <h2 class="nonogram__subtitle"></h2>
         <div class="nonogram__table">
@@ -60,8 +60,7 @@ nonogramSection.innerHTML = `
 `
 document.body.append(nonogramSection);
 
-const saveBtn = document.querySelector('.btn-save');
-saveBtn.addEventListener('click', (e) => saveGame(e));
+
 
 const resetBtn = document.querySelector('.btn-reset');
 resetBtn.addEventListener('click', (e) => resetGame(e));
@@ -97,6 +96,7 @@ function createNewGame(currentGame) {
   createLeftClues(tableCluesLeft, countCluesLeftCols, countCluesTopCols);
   createPlayField(countCluesTopCols, tablePlayField);
   createClues(cluesTop, cluesLeft, tableCluesTop, tableCluesLeft);
+
 }
 createNewGame(games[0]);
 
@@ -131,6 +131,68 @@ function createTable(container, rows, cols, classNameRow, classNameCol, tablePla
   }
 }
 
+//Timer
+
+let min = 0;
+let sec = 0;
+let interval;
+const playField = document.querySelector('.table__field ');
+
+function addTimer() {
+  playField.onclick = () => {
+    setTimer();
+    playField.onclick = null;
+  }
+
+  playField.oncontextmenu = () => {
+    setTimer();
+    playField.oncontextmenu = null;
+  }
+}
+addTimer();
+
+function setTimer() {
+  clearInterval(interval);
+  interval = setInterval(startTimer, 1000);
+}
+
+function resetTimer() {
+  clearInterval(interval);
+  min = 0;
+  sec = 0;
+  document.querySelector('.nonogram__min').innerHTML = '00';
+  document.querySelector('.nonogram__sec').innerHTML = '00';
+}
+
+function startTimer() {
+  const minContainer = document.querySelector('.nonogram__min');
+  const secContainer = document.querySelector('.nonogram__sec');
+  sec++;
+  if (sec < 10) {
+    secContainer.innerHTML = `0${sec}`;
+  } else if (sec < 60) {
+    secContainer.innerHTML = sec;
+  } else if (sec === 60) {
+    sec = 0;
+    min++;
+    secContainer.innerHTML = '00';
+  }
+
+  if (min < 10) {
+    minContainer.innerHTML = `0${min}`;
+  } else {
+    minContainer.innerHTML = min;
+  }
+  console.log(min);
+  console.log(sec);
+}
+
+
+
+const saveBtn = document.querySelector('.btn-save');
+saveBtn.addEventListener('click', (e) => {
+  saveGame(e);
+});
 
 function changeFill(e, tablePlayField, side) {
   const el = e.currentTarget;
@@ -181,6 +243,15 @@ function createLeftClues(tableCluesLeft, countCluesLeftCols, countCluesTopCols) 
 function createPlayField(countCluesTopCols, tablePlayField) {
   createTable(tablePlayField, countCluesTopCols, countCluesTopCols, '', 'col col_empty', tablePlayField);
   document.getElementsByClassName('table__container_row')[1].children[1].appendChild(tablePlayField);
+  tablePlayField.onclick = () => {
+    setTimer();
+    tablePlayField.onclick = null;
+  }
+
+  tablePlayField.oncontextmenu = () => {
+    setTimer();
+    tablePlayField.oncontextmenu = null;
+  }
 }
 
 
@@ -212,7 +283,10 @@ function createLevelItem() {
         const btn = document.createElement('div');
         btn.className = 'level__btn';
         btn.innerHTML = `${game.name}`;
-        btn.addEventListener('click', () => createNewGame(game));
+        btn.addEventListener('click', () => {
+          resetTimer();
+          createNewGame(game)
+        });
         btns.append(btn);
       }
     });
@@ -260,6 +334,7 @@ modal.innerHTML = `
 document.body.appendChild(modal);
 
 function checkWin(tablePlayField) {
+
   const allItems = tablePlayField.getElementsByClassName('col');
   const res = Array.from(allItems).every((item, index) => {
     if (item.classList.contains('col_fill') && controlField[index] === 1
@@ -268,10 +343,12 @@ function checkWin(tablePlayField) {
     }
   })
   if (res) {
-    const time = '14:22';
+    const min = document.querySelector('.nonogram__min').innerHTML;
+    const sec = document.querySelector('.nonogram__sec').innerHTML;
+    const time = `${min} : ${sec}`;
     showModalWin(time);
+    clearInterval(interval);
   }
-  console.log(res);
 }
 
 
@@ -299,6 +376,7 @@ function newGame(currentGame) {
   const modal = document.getElementsByClassName('modal')[0];
   modal.classList.remove('modal-show');
   modal.classList.add('modal-hide');
+  resetTimer();
   createNewGame(currentGame);
 }
 
@@ -377,10 +455,14 @@ function closeModal() {
 
 
 function saveGame(e) {
-  console.log('save game');
+  clearInterval(interval);
+  addTimer();
 }
 
 function resetGame(e) {
+  resetTimer();
+  addTimer();
+
   Array.from(document.querySelectorAll('.col_fill')).forEach(item => {
     item.classList.remove('col_fill');
     item.classList.add('col_empty');
@@ -391,3 +473,5 @@ function resetGame(e) {
     item.classList.add('col_empty');
   });
 }
+
+
