@@ -162,37 +162,6 @@ function changeFill(e, tablePlayField, side) {
 
   checkWin(tablePlayField);
 }
-// function changeFill(e, tablePlayField) {
-//   const el = e.currentTarget;
-//   console.log(e);
-
-//   if (el.classList.contains('col_empty') && e.which === 1) {
-//     el.classList.remove('col_empty');
-//     el.classList.add('col_fill');
-//   } else if (el.classList.contains('col_empty') && e.which === 3) {
-//     el.classList.remove('col_empty');
-//     el.classList.add('col_cross');
-//     el.innerHTML = `<div class='icon-cross'></div>`;
-//   } else if (el.classList.contains('col_fill') && e.which === 1) {
-//     el.classList.remove('col_fill');
-//     el.classList.add('col_empty');
-//   } else if (el.classList.contains('col_fill') && e.which === 3) {
-//     el.classList.remove('col_fill');
-//     el.classList.add('col_cross');
-//     el.innerHTML = `<div class='icon-cross'></div>`;
-//   } else if (el.classList.contains('col_cross') && e.which === 1) {
-//     el.classList.remove('col_cross');
-//     el.innerHTML = '';
-//     el.classList.add('col_fill');
-//   } else if (el.classList.contains('col_cross') && e.which === 3) {
-//     el.classList.remove('col_cross');
-//     console.log(el);
-//     el.innerHTML = '';
-//     el.classList.add('col_empty');
-//   }
-
-//   checkWin(tablePlayField);
-// }
 
 // Create top clues table
 function createTopClues(tableCluesTop, countCluesTopRows, countCluesTopCols) {
@@ -412,5 +381,13 @@ function saveGame(e) {
 }
 
 function resetGame(e) {
-  console.log('reset game');
+  Array.from(document.querySelectorAll('.col_fill')).forEach(item => {
+    item.classList.remove('col_fill');
+    item.classList.add('col_empty');
+  });
+  Array.from(document.querySelectorAll('.col_cross')).forEach(item => {
+    item.classList.remove('col_cross');
+    item.innerHTML = '';
+    item.classList.add('col_empty');
+  });
 }
