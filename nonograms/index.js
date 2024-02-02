@@ -1,8 +1,5 @@
 import games from './js/games.js';
-console.log(games);
 let controlField;
-
-
 
 // Create Header
 document.body.className = 'body';
@@ -122,8 +119,11 @@ function createTable(container, rows, cols, classNameRow, classNameCol, tablePla
       }
 
       if (container === tablePlayField) {
-        console.log('add');
-        col.addEventListener('click', (e) => changeFill(e, tablePlayField));
+        col.addEventListener('click', (e) => changeFill(e, tablePlayField, 'left'));
+        col.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          changeFill(e, tablePlayField, 'right');
+        });
       }
       row.appendChild(col);
     }
@@ -132,20 +132,67 @@ function createTable(container, rows, cols, classNameRow, classNameCol, tablePla
 }
 
 
-function changeFill(e, tablePlayField) {
-  console.log(tablePlayField);
-  const el = e.target;
-  console.log(e);
-  if (el.classList.contains('col_empty')) {
+function changeFill(e, tablePlayField, side) {
+  const el = e.currentTarget;
+
+  if (el.classList.contains('col_empty') && side === 'left') {
     el.classList.remove('col_empty');
     el.classList.add('col_fill');
-    checkWin(tablePlayField);
-  } else if (el.classList.contains('col_fill')) {
-    el.classList.add('col_empty');
+  } else if (el.classList.contains('col_empty') && side === 'right') {
+    el.classList.remove('col_empty');
+    el.classList.add('col_cross');
+    el.innerHTML = `<div class='icon-cross'></div>`;
+  } else if (el.classList.contains('col_fill') && side === 'left') {
     el.classList.remove('col_fill');
-    checkWin(tablePlayField);
+    el.classList.add('col_empty');
+  } else if (el.classList.contains('col_fill') && side === 'right') {
+    el.classList.remove('col_fill');
+    el.classList.add('col_cross');
+    el.innerHTML = `<div class='icon-cross'></div>`;
+  } else if (el.classList.contains('col_cross') && side === 'left') {
+    el.classList.remove('col_cross');
+    el.innerHTML = '';
+    el.classList.add('col_fill');
+  } else if (el.classList.contains('col_cross') && side === 'right') {
+    el.classList.remove('col_cross');
+    console.log(el);
+    el.innerHTML = '';
+    el.classList.add('col_empty');
   }
+
+  checkWin(tablePlayField);
 }
+// function changeFill(e, tablePlayField) {
+//   const el = e.currentTarget;
+//   console.log(e);
+
+//   if (el.classList.contains('col_empty') && e.which === 1) {
+//     el.classList.remove('col_empty');
+//     el.classList.add('col_fill');
+//   } else if (el.classList.contains('col_empty') && e.which === 3) {
+//     el.classList.remove('col_empty');
+//     el.classList.add('col_cross');
+//     el.innerHTML = `<div class='icon-cross'></div>`;
+//   } else if (el.classList.contains('col_fill') && e.which === 1) {
+//     el.classList.remove('col_fill');
+//     el.classList.add('col_empty');
+//   } else if (el.classList.contains('col_fill') && e.which === 3) {
+//     el.classList.remove('col_fill');
+//     el.classList.add('col_cross');
+//     el.innerHTML = `<div class='icon-cross'></div>`;
+//   } else if (el.classList.contains('col_cross') && e.which === 1) {
+//     el.classList.remove('col_cross');
+//     el.innerHTML = '';
+//     el.classList.add('col_fill');
+//   } else if (el.classList.contains('col_cross') && e.which === 3) {
+//     el.classList.remove('col_cross');
+//     console.log(el);
+//     el.innerHTML = '';
+//     el.classList.add('col_empty');
+//   }
+
+//   checkWin(tablePlayField);
+// }
 
 // Create top clues table
 function createTopClues(tableCluesTop, countCluesTopRows, countCluesTopCols) {
@@ -212,7 +259,6 @@ createLevelItem();
 
 function createClues(cluesTop, cluesLeft, tableCluesTop, tableCluesLeft) {
   Array.from(tableCluesTop.getElementsByTagName('tr')).forEach((item, itemIndex) => {
-    console.log(item);
     Array.from(item.children).forEach((el, elIndex) => {
       if (cluesTop[itemIndex][elIndex]) {
         el.innerHTML = cluesTop[itemIndex][elIndex];

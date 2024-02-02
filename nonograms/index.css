@@ -91,6 +91,17 @@ body {
   background-color: var(--bg-fill-color);
 }
 
+.icon-cross {
+  line-height: 24px;
+}
+
+@media (max-width: 580px) {
+  .icon-cross {
+    width: 21px;
+    height: 21px;
+  }
+}
+
 .col_b {
   border-bottom: 2px solid rgb(0, 0, 0);
 }
