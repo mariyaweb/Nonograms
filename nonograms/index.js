@@ -474,26 +474,12 @@ function closeModal() {
 
 
 function saveGame(e) {
-  clearInterval(interval);
-  addTimer();
   const nonogramName = document.querySelector('.nonogram__subtitle').innerHTML;
   const field = document.querySelector('.table__field').innerHTML;
-  let saveGame = [nonogramName, field];
-  console.log(field);
-  // let saveField;
-  // Array.from(field).forEach(row => {
-  //   Array.from(row).forEach(col => {
-  //     if (col.classList.contains('col_empty')) {
+  let min = document.querySelector('.nonogram__min').innerHTML;
+  const sec = document.querySelector('.nonogram__sec').innerHTML;
 
-  //     } else if (col.classList.contains('col_fill')) {
-
-  //     } else if (col.classList.contains('col_cross')) {
-
-  //     }
-  //   })
-  // })
-
-
+  let saveGame = [nonogramName, field, min, sec];
   localStorage.setItem('saveNonogram', JSON.stringify(saveGame));
 }
 
@@ -522,12 +508,17 @@ function continueLastGame() {
   const lastGame = JSON.parse(localStorage.getItem('saveNonogram'));
   const name = lastGame[0];
   const field = lastGame[1];
+  const saveMin = lastGame[2];
+  const saveSec = lastGame[3];
 
   games.forEach((item, index) => {
     if (item.name === name) {
       createNewGame(games[index]);
-
+      document.querySelector('.nonogram__min').innerHTML = saveMin;
+      document.querySelector('.nonogram__sec').innerHTML = saveSec;
       document.querySelector('.table__field ').innerHTML = field;
+      min = +saveMin;
+      sec = +saveSec;
       const playField = document.querySelector('.table__field')
       let cols = playField.getElementsByTagName('td');
 
