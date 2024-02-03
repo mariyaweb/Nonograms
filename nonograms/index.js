@@ -476,6 +476,25 @@ function closeModal() {
 function saveGame(e) {
   clearInterval(interval);
   addTimer();
+  const nonogramName = document.querySelector('.nonogram__subtitle').innerHTML;
+  const field = document.querySelector('.table__field').innerHTML;
+  let saveGame = [nonogramName, field];
+  console.log(field);
+  // let saveField;
+  // Array.from(field).forEach(row => {
+  //   Array.from(row).forEach(col => {
+  //     if (col.classList.contains('col_empty')) {
+
+  //     } else if (col.classList.contains('col_fill')) {
+
+  //     } else if (col.classList.contains('col_cross')) {
+
+  //     }
+  //   })
+  // })
+
+
+  localStorage.setItem('saveNonogram', JSON.stringify(saveGame));
 }
 
 function resetGame(e) {
@@ -490,6 +509,37 @@ function resetGame(e) {
     item.classList.remove('col_cross');
     item.innerHTML = '';
     item.classList.add('col_empty');
+  });
+}
+
+document.querySelector('#puzzle').addEventListener('click', () => {
+  resetTimer();
+  addTimer();
+  continueLastGame();
+});
+
+function continueLastGame() {
+  const lastGame = JSON.parse(localStorage.getItem('saveNonogram'));
+  const name = lastGame[0];
+  const field = lastGame[1];
+
+  games.forEach((item, index) => {
+    if (item.name === name) {
+      createNewGame(games[index]);
+
+      document.querySelector('.table__field ').innerHTML = field;
+      const playField = document.querySelector('.table__field')
+      let cols = playField.getElementsByTagName('td');
+
+      Array.from(cols).forEach(col => {
+        col.addEventListener('click', (e) => changeFill(e, playField, 'left'));
+        col.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          changeFill(e, playField, 'right');
+        });
+      });
+
+    }
   });
 }
 
