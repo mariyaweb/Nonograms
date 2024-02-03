@@ -1,5 +1,13 @@
 import games from './js/games.js';
 let controlField;
+const audioFill = new Audio();
+audioFill.src = './assets/sound/click.mp3';
+const audioEmpty = new Audio();
+audioEmpty.src = './assets/sound/click6.mp3';
+const audioCross = new Audio();
+audioCross.src = './assets/sound/click3.wav';
+const audioWin = new Audio();
+audioWin.src = './assets/sound/win.mp3';
 
 // Create Header
 document.body.className = 'body';
@@ -132,7 +140,6 @@ function createTable(container, rows, cols, classNameRow, classNameCol, tablePla
 }
 
 //Timer
-
 let min = 0;
 let sec = 0;
 let interval;
@@ -183,10 +190,7 @@ function startTimer() {
   } else {
     minContainer.innerHTML = min;
   }
-  console.log(min);
-  console.log(sec);
 }
-
 
 
 const saveBtn = document.querySelector('.btn-save');
@@ -194,30 +198,47 @@ saveBtn.addEventListener('click', (e) => {
   saveGame(e);
 });
 
+function stopPlay() {
+  audioFill.pause();
+  audioFill.currentTime = 0;
+
+  audioEmpty.pause();
+  audioEmpty.currentTime = 0;
+
+  audioCross.pause();
+  audioCross.currentTime = 0;
+}
+
 function changeFill(e, tablePlayField, side) {
   const el = e.currentTarget;
+  stopPlay();
 
   if (el.classList.contains('col_empty') && side === 'left') {
+    audioFill.play();
     el.classList.remove('col_empty');
     el.classList.add('col_fill');
   } else if (el.classList.contains('col_empty') && side === 'right') {
+    audioCross.play();
     el.classList.remove('col_empty');
     el.classList.add('col_cross');
     el.innerHTML = `<div class='icon-cross'></div>`;
   } else if (el.classList.contains('col_fill') && side === 'left') {
+    audioEmpty.play();
     el.classList.remove('col_fill');
     el.classList.add('col_empty');
   } else if (el.classList.contains('col_fill') && side === 'right') {
+    audioCross.play();
     el.classList.remove('col_fill');
     el.classList.add('col_cross');
     el.innerHTML = `<div class='icon-cross'></div>`;
   } else if (el.classList.contains('col_cross') && side === 'left') {
+    audioFill.play();
     el.classList.remove('col_cross');
     el.innerHTML = '';
     el.classList.add('col_fill');
   } else if (el.classList.contains('col_cross') && side === 'right') {
+    audioEmpty.play();
     el.classList.remove('col_cross');
-    console.log(el);
     el.innerHTML = '';
     el.classList.add('col_empty');
   }
@@ -253,7 +274,6 @@ function createPlayField(countCluesTopCols, tablePlayField) {
     tablePlayField.oncontextmenu = null;
   }
 }
-
 
 //Create level list
 const nonogramList = document.createElement('div');
@@ -370,6 +390,7 @@ function showModalWin(time) {
   document.querySelector('.modal__btn').addEventListener('click', () => openModalLevel());
   modal.classList.remove('modal-hide');
   modal.classList.add('modal-show');
+  audioWin.play();
 }
 
 function newGame(currentGame) {
@@ -450,8 +471,6 @@ function closeModal() {
   modal.classList.add('modal-hide');
   modal.classList.remove('modal-show');
 }
-
-
 
 
 function saveGame(e) {
