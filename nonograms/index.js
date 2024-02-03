@@ -481,11 +481,13 @@ function saveGame(e) {
 
   let saveGame = [nonogramName, field, min, sec];
   localStorage.setItem('saveNonogram', JSON.stringify(saveGame));
+  addTimer();
 }
 
 function resetGame(e) {
   resetTimer();
   addTimer();
+
 
   Array.from(document.querySelectorAll('.col_fill')).forEach(item => {
     item.classList.remove('col_fill');
