@@ -60,8 +60,8 @@ nonogramSection.innerHTML = `
         <h2 class="nonogram__subtitle"></h2>
         <div class="nonogram__table">
           <div class="nonogram__btns">
-          <div class="nonogram__btn btn-save">Save</div>
-          <div class="nonogram__btn btn-reset">Reset</div>
+          <div class="nonogram__btn btn-save" id="btn-save" data-clue="Save this game">Save</div>
+          <div class="nonogram__btn btn-reset" data-clue="Reset this game">Reset</div>
         </div>
       </div>
 </div>
@@ -360,13 +360,11 @@ document.body.appendChild(modal);
 function checkWin(tablePlayField) {
   const allItems = tablePlayField.getElementsByClassName('col');
   const res = Array.from(allItems).every((item, index) => {
-    console.log(item);
     if (item.classList.contains('col_fill') && controlField[index] === 1
       || !item.classList.contains('col_fill') && controlField[index] === 0) {
       return true;
     }
   })
-  console.log(res);
   if (res) {
     let minWin = +document.querySelector('.nonogram__min').innerHTML;
     let secWin = +document.querySelector('.nonogram__sec').innerHTML;
@@ -826,4 +824,7 @@ function showModalGameOver() {
 
 }
 
-console.log('Score: 250/250');
+console.log(`
+При наведении на кнопки выводится их полное название.
+Score: 250/250
+`);

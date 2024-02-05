@@ -346,6 +346,8 @@ body {
   position: relative;
 }
 
+.btn-save::before,
+.btn-reset::before,
 .header__btn:before {
   content: attr(data-clue);
   font-size: 12px;
@@ -361,10 +363,21 @@ body {
   transition: all 0.2s;
 }
 
+.btn-save::before,
+.btn-reset::before {
+  top: auto;
+  border-radius: 4px;
+  width: 60px;
+}
+
+.btn-save:hover,
+.btn-reset:hover,
 .header__btn:hover {
   box-shadow: var(--btn-shadow);
 }
 
+.btn-save:hover:before,
+.btn-reset:hover:before,
 .header__btn:hover:before {
   opacity: 1;
 }
