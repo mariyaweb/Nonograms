@@ -738,3 +738,15 @@ function continueLastGame() {
 }
 
 
+//Add random game
+document.querySelector('#random').addEventListener('click', () => randomGame());
+
+function randomGame() {
+  const randNum = Math.floor(Math.random() * games.length);
+  const currGame = document.querySelector('.nonogram__subtitle').innerHTML;
+  if (games[randNum].name === currGame) {
+    randomGame();
+  } else {
+    createNewGame(games[randNum]);
+  }
+}
