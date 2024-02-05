@@ -96,8 +96,8 @@ body {
 
 @media (max-width: 580px) {
   .icon-cross {
-    width: 21px;
-    height: 21px;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
