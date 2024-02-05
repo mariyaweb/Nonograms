@@ -751,6 +751,7 @@ function randomGame() {
   } else {
     createNewGame(games[randNum]);
   }
+  resetTimer();
 }
 
 document.querySelector('#light').addEventListener('click', () => showSolution());
@@ -799,6 +800,7 @@ function showSolution() {
   }
 
   document.querySelector('.btn-reset').addEventListener('click', () => {
+    resetTimer();
     createNewGame(games[currIndex]);
   });
 }
