@@ -11,6 +11,7 @@
   --main-bg-color: #f5f6f7;
   --bg-light-color: #ffffff;
   --main-text-color: #3e3c5a;
+  --table-text-color: #424867;
   --bg-fill-color: #3e3c5a;
   --table-number-bg-color: rgba(221, 234, 255);
   --theme-ico-light: #ffd600;
@@ -30,6 +31,7 @@
   --main-bg-color: #1e1d28;
   --bg-light-color: #262437;
   --main-text-color: #ffffff;
+  --table-text-color: #fff;
   --bg-fill-color: #7f7bad;
   --table-number-bg-color: #1c1330;
   --theme-ico-light: #3f3d4e;
@@ -54,6 +56,7 @@ body {
 /* Playing field */
 .table {
   border-collapse: collapse;
+  height: 100%;
 }
 
 .table__container {
@@ -89,10 +92,6 @@ body {
 
 .col_fill {
   background-color: var(--bg-fill-color);
-}
-
-.icon-cross {
-  line-height: 24px;
 }
 
 @media (max-width: 580px) {
@@ -579,4 +578,85 @@ body {
 
 .level__btn:hover {
   box-shadow: var(--btn-shadow);
+}
+
+.modal__table {
+  width: 100%;
+  padding-top: 35px;
+  border-bottom: 3px solid var(--bg-light-color);
+  border-radius: 10px;
+}
+
+.score__table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  text-align: center;
+  width: 100%;
+}
+
+.score__table .score__head {
+  padding: 10px 20px;
+  background-color: #663cc1;
+}
+
+.score__heads tr:first-child th:first-child {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.score__heads tr:first-child th:last-child {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.score__heads {
+  font-size: 28px;
+  color: #fff;
+  background-color: var(--bg-light-color);
+}
+
+@media (max-width: 580px) {
+  .score__heads {
+    font-size: 22px;
+  }
+}
+
+.score__col {
+  width: 100%;
+  font-size: 18px;
+  padding: 20px 25px;
+  color: var(--main-text-color);
+}
+
+@media (max-width: 580px) {
+  .score__col {
+    font-size: 16px;
+    padding: 20px 10px;
+  }
+}
+
+.score__row:first-child td {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.score__row:first-child td {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.score__row:nth-child(odd) {
+  background-color: var(--bg-light-color);
+}
+
+.score__row:nth-child(even) {
+  background-color: transparent;
+}
+
+.info__subtitle {
+  padding-bottom: 30px;
+}
+
+.info__title {
+  padding-bottom: 15px;
 }

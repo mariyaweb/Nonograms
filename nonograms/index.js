@@ -143,9 +143,10 @@ function createTable(container, rows, cols, classNameRow, classNameCol, tablePla
 let min = 0;
 let sec = 0;
 let interval;
-const playField = document.querySelector('.table__field ');
+let playField = document.querySelector('.table__field ');
 
 function addTimer() {
+  playField = document.querySelector('.table__field ');
   playField.onclick = () => {
     setTimer();
     playField.onclick = null;
@@ -363,10 +364,26 @@ function checkWin(tablePlayField) {
     }
   })
   if (res) {
-    const min = document.querySelector('.nonogram__min').innerHTML;
-    const sec = document.querySelector('.nonogram__sec').innerHTML;
-    const time = `${min} : ${sec}`;
+    let minWin = +document.querySelector('.nonogram__min').innerHTML;
+    let secWin = +document.querySelector('.nonogram__sec').innerHTML;
+    const nameWin = document.querySelector('.nonogram__subtitle').innerHTML;
+
+    if (secWin < 10) {
+      secWin = `0${secWin}`;
+    } else if (secWin < 60) {
+      secWin = secWin;
+    } else if (secWin === 60) {
+      secWin = '00';
+    }
+
+    if (minWin < 10) {
+      minWin = `0${minWin}`;
+    } else {
+      minWin = minWin;
+    }
+    const time = `${minWin} : ${secWin}`;
     showModalWin(time);
+    saveWin(minWin, secWin, nameWin);
     clearInterval(interval);
   }
 }
@@ -391,6 +408,169 @@ function showModalWin(time) {
   modal.classList.remove('modal-hide');
   modal.classList.add('modal-show');
   audioWin.play();
+}
+
+//Create a High score table
+const scoreBtn = document.querySelector('#star');
+scoreBtn.addEventListener('click', () => openScoreTable());
+
+function openScoreTable() {
+  const modal = document.querySelector('.modal');
+  const modalWrapper = document.querySelector('.modal__wrapper');
+  modalWrapper.innerHTML = '';
+
+  modalWrapper.innerHTML = `
+      <div class="modal__close">
+        <span class="modal__line"></span>
+        <span class="modal__line"></span>
+      </div>
+      <div class="modal__title">High score table</div>
+      <div class="modal__table">
+        <table class="score__table">
+          <thead class="score__heads">
+            <tr>
+              <th class="score__head">Name</th>
+              <th class="score__head">Level</th>
+              <th class="score__head">Time</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+  `
+  const getScore = JSON.parse(localStorage.getItem('winListNonogram'));
+  if (!getScore) {
+    showModalNotWin();
+  }
+  if (getScore) {
+    const tableBody = document.createElement('tbody');
+    tableBody.className = 'score__body';
+
+    getScore.pop();
+    getScore.forEach(item => {
+      const scoreRow = document.createElement('tr');
+      scoreRow.className = 'score__row';
+      scoreRow.innerHTML = `
+        <td class="score__col">${item.name}</td>
+        <td class="score__col">${item.level}</td>
+        <td class="score__col">${item.time}</td>
+      `;
+      tableBody.append(scoreRow);
+    });
+
+    document.querySelector('.score__table').append(tableBody);
+  }
+
+
+  document.querySelector('.modal__close').addEventListener('click', () => closeModal());
+  modal.classList.remove('modal-hide');
+  modal.classList.add('modal-show');
+}
+
+function showModalNotWin() {
+  const modal = document.querySelector('.modal');
+  const modalWrapper = document.querySelector('.modal__wrapper');
+
+  modalWrapper.innerHTML = `
+      <div class="modal__close">
+        <span class="modal__line"></span>
+        <span class="modal__line"></span>
+      </div>
+      <div class="modal__title info__title">No victories!</div>
+      <div class="modal__subtitle info__subtitle">Choose a new game</div>
+      <div class="modal__btn btn">New game</div>
+  `
+  document.querySelector('.modal__close').addEventListener('click', () => closeModal());
+  document.querySelector('.modal__btn').addEventListener('click', () => openModalLevel());
+  modal.classList.remove('modal-hide');
+  modal.classList.add('modal-show');
+}
+
+//Save winners
+function saveWin(minWin, secWin, nameWin) {
+  const gameLevel = getLevel(nameWin);
+  class NewWin {
+    constructor(name, level, time, min, sec, queue) {
+      this.name = name;
+      this.level = level;
+      this.time = time;
+      this.min = min;
+      this.sec = sec;
+      this.queue = queue;
+    }
+  }
+
+  let getWinList = JSON.parse(localStorage.getItem('winListNonogram'));
+
+  if (!getWinList) {
+    const winnerGame = new NewWin(nameWin, gameLevel, `${minWin} : ${secWin}`, minWin, secWin, 1);
+    let scoreArr = [];
+    scoreArr.push(winnerGame);
+    scoreArr.push(winnerGame.queue);
+    localStorage.setItem('winListNonogram', JSON.stringify(scoreArr));
+  } else {
+    const winLength = getWinList.length;
+    let maxQueue = getWinList[winLength - 1] + 1;
+
+    const currWin = new NewWin(nameWin, gameLevel, `${minWin} : ${secWin}`, minWin, secWin, maxQueue);
+    getWinList.pop();
+    let scoreArr = getWinList;
+    scoreArr.push(currWin);
+
+    scoreArr.sort((a, b) => {
+      if (a.queue > b.queue) {
+        return 1;
+      } if (a.queue < b.queue) {
+        return -1;
+      }
+    });
+
+    if (scoreArr.length === 6) {
+      scoreArr.shift();
+    }
+
+    maxQueue = scoreArr[scoreArr.length - 1].queue;
+    sortByTime(scoreArr);
+    scoreArr.push(maxQueue);
+    localStorage.setItem('winListNonogram', JSON.stringify(scoreArr));
+  }
+}
+
+function getLevel(name) {
+  let gameLevel;
+  games.forEach(game => {
+    if (game.name === name) {
+      if (game.size === 5) {
+        gameLevel = 'Easy';
+      }
+      if (game.size === 10) {
+        gameLevel = 'Medium';
+      }
+      if (game.size === 15) {
+        gameLevel = 'Hard';
+      }
+    }
+  });
+  return gameLevel;
+}
+
+function sortByTime(arr) {
+  arr.sort((a, b) => {
+    if (+a.min > +b.min) {
+      return 1;
+    }
+
+    if (+a.min < +b.min) {
+      return -1;
+    }
+
+    if (+a.min === +b.min) {
+      if (+a.sec > +b.sec) {
+        return 1;
+      } else if (+a.sec < +b.sec) {
+        return -1;
+      }
+    }
+  });
 }
 
 function newGame(currentGame) {
@@ -488,7 +668,6 @@ function resetGame(e) {
   resetTimer();
   addTimer();
 
-
   Array.from(document.querySelectorAll('.col_fill')).forEach(item => {
     item.classList.remove('col_fill');
     item.classList.add('col_empty');
@@ -503,8 +682,31 @@ function resetGame(e) {
 document.querySelector('#puzzle').addEventListener('click', () => {
   resetTimer();
   addTimer();
-  continueLastGame();
+  if (!JSON.parse(localStorage.getItem('saveNonogram'))) {
+    showModalNotLastGame();
+  } else {
+    continueLastGame();
+  }
 });
+
+function showModalNotLastGame() {
+  const modal = document.querySelector('.modal');
+  const modalWrapper = document.querySelector('.modal__wrapper');
+
+  modalWrapper.innerHTML = `
+      <div class="modal__close">
+        <span class="modal__line"></span>
+        <span class="modal__line"></span>
+      </div>
+      <div class="modal__title info__title">No saved game!</div>
+      <div class="modal__subtitle info__subtitle">Choose a new game</div>
+      <div class="modal__btn btn">New game</div>
+  `
+  document.querySelector('.modal__close').addEventListener('click', () => closeModal());
+  document.querySelector('.modal__btn').addEventListener('click', () => openModalLevel());
+  modal.classList.remove('modal-hide');
+  modal.classList.add('modal-show');
+}
 
 function continueLastGame() {
   const lastGame = JSON.parse(localStorage.getItem('saveNonogram'));
@@ -531,7 +733,6 @@ function continueLastGame() {
           changeFill(e, playField, 'right');
         });
       });
-
     }
   });
 }
