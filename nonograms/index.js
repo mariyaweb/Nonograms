@@ -750,3 +750,37 @@ function randomGame() {
     createNewGame(games[randNum]);
   }
 }
+
+document.querySelector('#light').addEventListener('click', () => showSolution());
+
+//Add solution
+function showSolution() {
+  const name = document.querySelector('.nonogram__subtitle').innerHTML;
+  let field;
+  games.forEach(item => {
+    if (item.name === name) {
+      field = item.field;
+    }
+  });
+  field = field.flat(Infinity);
+  console.log(field);
+  resetTimer();
+  addTimer();
+
+  const playField = document.querySelector('.table__field');
+  Array.from(playField.querySelectorAll('.col')).forEach((item, index) => {
+
+    if (field[index] === 0) {
+      item.classList.remove('col_fill');
+      item.classList.remove('col_empty');
+      item.classList.add('col_cross');
+      item.innerHTML = `<div class='icon-cross'></div>`;
+    } else if (field[index] === 1) {
+      item.classList.remove('col_cross');
+      item.classList.remove('col_empty');
+      item.innerHTML = '';
+      item.classList.add('col_fill');
+    }
+
+  });
+}
