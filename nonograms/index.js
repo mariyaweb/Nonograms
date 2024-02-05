@@ -71,7 +71,7 @@ document.body.append(nonogramSection);
 
 
 const resetBtn = document.querySelector('.btn-reset');
-resetBtn.addEventListener('click', (e) => resetGame(e));
+resetBtn.addEventListener('click', () => resetGame());
 
 
 // Nonogram Table
@@ -105,6 +105,9 @@ function createNewGame(currentGame) {
   createPlayField(countCluesTopCols, tablePlayField);
   createClues(cluesTop, cluesLeft, tableCluesTop, tableCluesLeft);
 
+  document.querySelector('.btn-save').onclick = () => {
+    saveGame();
+  }
 }
 createNewGame(games[0]);
 
@@ -195,9 +198,7 @@ function startTimer() {
 
 
 const saveBtn = document.querySelector('.btn-save');
-saveBtn.addEventListener('click', (e) => {
-  saveGame(e);
-});
+saveBtn.addEventListener('click', () => saveGame());
 
 function stopPlay() {
   audioFill.pause();
@@ -244,7 +245,9 @@ function changeFill(e, tablePlayField, side) {
     el.classList.add('col_empty');
   }
 
-  checkWin(tablePlayField);
+  if (!tablePlayField.classList.contains('solution')) {
+    checkWin(tablePlayField);
+  }
 }
 
 // Create top clues table
@@ -653,7 +656,7 @@ function closeModal() {
 }
 
 
-function saveGame(e) {
+function saveGame() {
   const nonogramName = document.querySelector('.nonogram__subtitle').innerHTML;
   const field = document.querySelector('.table__field').innerHTML;
   let min = document.querySelector('.nonogram__min').innerHTML;
@@ -664,7 +667,7 @@ function saveGame(e) {
   addTimer();
 }
 
-function resetGame(e) {
+function resetGame() {
   resetTimer();
   addTimer();
 
@@ -756,15 +759,17 @@ document.querySelector('#light').addEventListener('click', () => showSolution())
 //Add solution
 function showSolution() {
   const name = document.querySelector('.nonogram__subtitle').innerHTML;
+  let currIndex;
   let field;
-  games.forEach(item => {
+  games.forEach((item, index) => {
     if (item.name === name) {
       field = item.field;
+      currIndex = index;
     }
   });
   field = field.flat(Infinity);
   resetTimer();
-  addTimer();
+  // addTimer();
 
   const playField = document.querySelector('.table__field');
   Array.from(playField.querySelectorAll('.col')).forEach((item, index) => {
@@ -780,8 +785,43 @@ function showSolution() {
       item.innerHTML = '';
       item.classList.add('col_fill');
     }
-
   });
+
+  playField.classList.add('solution');
+  playField.addEventListener('click', () => {
+    resetTimer();
+    showModalGameOver();
+  });
+
+  document.querySelector('.btn-save').onclick = () => {
+    resetTimer();
+    showModalGameOver();
+  }
+
+  document.querySelector('.btn-reset').addEventListener('click', () => {
+    createNewGame(games[currIndex]);
+  });
+}
+
+function showModalGameOver() {
+  const modal = document.querySelector('.modal');
+  const modalWrapper = document.querySelector('.modal__wrapper');
+
+  modalWrapper.innerHTML = `
+        <div class="modal__close">
+          <span class="modal__line"></span>
+          <span class="modal__line"></span>
+        </div>
+        <div class="modal__title info__title">Game over!</div>
+        <div class="modal__subtitle info__subtitle">Cannot save or continue solution!<br>Choose a new game:</div>
+        <div class="modal__btn btn">New game</div>
+    `
+
+  document.querySelector('.modal__close').addEventListener('click', () => closeModal());
+  document.querySelector('.modal__btn').addEventListener('click', () => openModalLevel());
+  modal.classList.remove('modal-hide');
+  modal.classList.add('modal-show');
+
 }
 
 console.log('Score: 250/250');
