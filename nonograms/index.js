@@ -358,14 +358,15 @@ modal.innerHTML = `
 document.body.appendChild(modal);
 
 function checkWin(tablePlayField) {
-
   const allItems = tablePlayField.getElementsByClassName('col');
   const res = Array.from(allItems).every((item, index) => {
+    console.log(item);
     if (item.classList.contains('col_fill') && controlField[index] === 1
       || !item.classList.contains('col_fill') && controlField[index] === 0) {
       return true;
     }
   })
+  console.log(res);
   if (res) {
     let minWin = +document.querySelector('.nonogram__min').innerHTML;
     let secWin = +document.querySelector('.nonogram__sec').innerHTML;
@@ -769,6 +770,7 @@ function showSolution() {
   });
   field = field.flat(Infinity);
   resetTimer();
+
   // addTimer();
 
   const playField = document.querySelector('.table__field');
