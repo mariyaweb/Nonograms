@@ -763,7 +763,6 @@ function showSolution() {
     }
   });
   field = field.flat(Infinity);
-  console.log(field);
   resetTimer();
   addTimer();
 
@@ -784,3 +783,5 @@ function showSolution() {
 
   });
 }
+
+console.log('Score: 250/250');
