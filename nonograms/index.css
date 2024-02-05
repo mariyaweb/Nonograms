@@ -99,6 +99,9 @@ body {
   .icon-cross {
     width: 21px;
     height: 21px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
